@@ -1,0 +1,45 @@
+{
+    "main": {
+        "port": "7000",
+        "log_type": "FILE",
+        "log_level": "debug",
+        "log_file": "tmp/console.log",
+        "storage": "local",
+        "auth": "oauth",
+        "db": "enabled",
+        "elastic_search": "disabled",
+        "redis": "enabled",
+        "rabbitmq": "disabled",
+        "event_socket": "enabled",
+        "callback": "disabled",
+        "sftp": "disabled"
+    },
+    "oauth": {
+        "tokenType": "Bearer",
+        "expired_in": "15552000"
+    },
+    "event_socket": {
+        "address": "",
+        "port": 7021,
+        "password": "",
+        "timeout": 10
+    },
+    "redis": {
+        "address": "localhost:6379",
+        "database": 2,
+        "password": ""
+    },
+    "db": {
+        "driver": "postgresql",
+        "host": "localhost",
+        "port": 5432,
+        "username": "",
+        "password": "",
+        "database": "fusionpbx"
+    },
+    "open_weather": {
+        "domain": "http://api.openweathermap.org",
+        "key": "cb1155ce05da3a2379270ccf87b6b7c5",
+        "signature": "BesAnh"
+    }
+}
