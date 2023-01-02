@@ -18,7 +18,7 @@ func NewApiWeather(c *gin.Engine, signature string, weatherService service.IWeat
 
 	Group := c.Group("v1/weather")
 	{
-		Group.GET("data", ValidHeader(signature), handler.GetWeatherData)
+		Group.GET("data", handler.GetWeatherData)
 	}
 }
 

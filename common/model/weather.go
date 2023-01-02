@@ -41,10 +41,11 @@ type WeatherData struct {
 		Sunrise uint64 `json:"sunrise"`
 		Sunset  uint64 `json:"sunset"`
 	} `json:"sys"`
-	Timezone int64  `json:"timezone"`
-	Id       uint64 `json:"id"`
-	Name     string `json:"name"`
-	Cod      int    `json:"cod"`
+	Timezone     int64  `json:"timezone"`
+	Id           uint64 `json:"id"`
+	Name         string `json:"name"`
+	Cod          int    `json:"cod"`
+	NameLocation string `json:"name_location"`
 }
 
 type Weather struct {

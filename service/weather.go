@@ -36,55 +36,61 @@ func NewWeather(config WeatherConfig) IWeather {
 }
 
 func (service *Weather) GetWeatherData(ctx context.Context) (int, interface{}) {
-	queryParams := map[string]string{}
-	queryParams["q"] = "Ho_Chi_Minh"
-	queryParams["limit"] = "5"
-	queryParams["appid"] = service.config.Key
-	client := resty.New()
-	client.SetTimeout(time.Second * 3)
-	client.SetTLSClientConfig(&tls.Config{
-		InsecureSkipVerify: true,
-	})
-	url := fmt.Sprintf("%s/geo/1.0/direct", service.config.Domain)
-	res, err := client.R().
-		SetQueryParams(queryParams).
-		ForceContentType("application/json").
-		Get(url)
-	if err != nil {
-		log.Error(err)
-		return response.ServiceUnavailableMsg(err.Error())
-	}
-	result := []model.WeatherCoordinateLocation{}
-	if err := json.Unmarshal(res.Body(), &result); err != nil {
-		log.Error(err)
-		return response.ServiceUnavailableMsg(err.Error())
-	}
-	if len(result) > 0 {
+	resp := []model.WeatherData{}
+	cities := []string{"Ho Chi Minh", "Ha Noi", "Da Nang"}
+	for _, val := range cities {
 		queryParams := map[string]string{}
-		queryParams["lat"] = fmt.Sprintf("%f", result[0].Lat)
-		queryParams["lon"] = fmt.Sprintf("%f", result[0].Lon)
+		queryParams["q"] = val
+		queryParams["limit"] = "5"
 		queryParams["appid"] = service.config.Key
 		client := resty.New()
 		client.SetTimeout(time.Second * 3)
 		client.SetTLSClientConfig(&tls.Config{
 			InsecureSkipVerify: true,
 		})
-		url := fmt.Sprintf("%s/data/2.5/weather", service.config.Domain)
+		url := fmt.Sprintf("%s/geo/1.0/direct", service.config.Domain)
 		res, err := client.R().
-			SetHeader("content-type", "application/json").
 			SetQueryParams(queryParams).
 			ForceContentType("application/json").
 			Get(url)
 		if err != nil {
 			log.Error(err)
-			return response.ServiceUnavailableMsg(err.Error())
+			continue
 		}
-		result := model.WeatherData{}
+		result := []model.WeatherCoordinateLocation{}
 		if err := json.Unmarshal(res.Body(), &result); err != nil {
 			log.Error(err)
-			return response.ServiceUnavailableMsg(err.Error())
+			continue
 		}
-		return response.Data(http.StatusOK, result)
+		if len(result) > 0 {
+			queryParams := map[string]string{}
+			queryParams["lat"] = fmt.Sprintf("%f", result[0].Lat)
+			queryParams["lon"] = fmt.Sprintf("%f", result[0].Lon)
+			queryParams["appid"] = service.config.Key
+			client := resty.New()
+			client.SetTimeout(time.Second * 3)
+			client.SetTLSClientConfig(&tls.Config{
+				InsecureSkipVerify: true,
+			})
+			url := fmt.Sprintf("%s/data/2.5/weather", service.config.Domain)
+			res, err := client.R().
+				SetHeader("content-type", "application/json").
+				SetQueryParams(queryParams).
+				ForceContentType("application/json").
+				Get(url)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
+			result := model.WeatherData{}
+			if err := json.Unmarshal(res.Body(), &result); err != nil {
+				log.Error(err)
+				continue
+			}
+			result.NameLocation = val
+			resp = append(resp, result)
+		}
 	}
-	return response.Data(http.StatusOK, nil)
+
+	return response.Data(http.StatusOK, resp)
 }

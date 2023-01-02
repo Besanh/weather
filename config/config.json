@@ -1,6 +1,6 @@
 {
     "main": {
-        "port": "7000",
+        "port": "8000",
         "log_type": "FILE",
         "log_level": "debug",
         "log_file": "tmp/console.log",
