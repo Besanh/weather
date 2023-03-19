@@ -19,6 +19,7 @@ func NewApiWeather(c *gin.Engine, signature string, weatherService service.IWeat
 	Group := c.Group("v1/weather")
 	{
 		Group.GET("data", handler.GetWeatherData)
+		Group.GET("historical", handler.GetHistorical)
 	}
 }
 
@@ -39,5 +40,10 @@ func ValidHeader(signature string) gin.HandlerFunc {
 
 func (handler *Weather) GetWeatherData(c *gin.Context) {
 	code, result := handler.weatherService.GetWeatherData(c)
+	c.JSON(code, result)
+}
+
+func (handler *Weather) GetHistorical(c *gin.Context) {
+	code, result := handler.weatherService.GetHistorical(c)
 	c.JSON(code, result)
 }
